@@ -24,12 +24,6 @@ db = mysql.connector.connect(
 cur = db.cursor()
 c = 1
 for i in rec:
-    # print(type(i[4]))
-    # print(type(i[6]))
-    # print(type(i[7]))
-    # print(type(i[8]))
-    # print(type(i[9]))
-    # print(type(i[10]))
     val = (i[4],i[6],i[7],i[8],i[9],i[10])
     cur.execute(f"insert into SHOESALES values {val}")
     print(f"{c} records added")
