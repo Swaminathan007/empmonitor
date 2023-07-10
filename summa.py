@@ -1,1 +1,2 @@
-print("Hello world 6")
+s = "1200.00"
+print(s[:-3:])
