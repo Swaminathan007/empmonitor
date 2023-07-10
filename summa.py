@@ -1,2 +1,5 @@
-s = "1200.00"
-print(s[:-3:])
+import csv
+f = open("Adidas US Sales Datasets.csv","r")
+r = csv.reader(f)
+r = list(r)
+print(r[1])
