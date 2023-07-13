@@ -1,8 +1,0 @@
-create database sales;
-
-use sales;
-
-create table salesfil (Retailer varchar(30), Region varchar(30), State varchar(20),City
-varchar(30),Product varchar(30),Price_per_Unit double,Units_Sold integer,Total_Sales double, Operating_Profit double,Sales_Method varchar(20));
- 
-select * from salesfil;
