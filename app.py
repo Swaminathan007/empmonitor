@@ -8,5 +8,5 @@ class Employee:
 @app.route("/",methods = ["GET","POST"])
 def login():
     
-    return render_template("login.html",e = e)
+    return render_template("login.html")
 app.run(debug = True,host = "0.0.0.0")
