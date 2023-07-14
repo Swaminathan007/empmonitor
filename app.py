@@ -1,6 +1,6 @@
 from flask import *
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from flask_mysqldb import MySQL
+#from flask_mysqldb import MySQL
 import mysql.connector
 from datetime import datetime,date
 app = Flask(__name__)
@@ -72,7 +72,7 @@ def login():
 @app.route("/welcome")
 @login_required
 def welcome():
-    cursor.execute(f"select task,compornot from addtask where emp_id={current_user.id}")
+    cursor.execute(f"select task,compornot,taskid from addtask where emp_id={current_user.id}")
     tasks = cursor.fetchall()
     print(tasks)
     return render_template('welcome.html', user=current_user,tasks = tasks)
@@ -81,13 +81,19 @@ def welcome():
 def addtask():
     if(request.method == "POST"):
         task = request.form["task"]
-        cursor.execute(f"insert into addtask(emp_id,task,compornot,tod_date) values({current_user.id},{task},{False},'{datetime.today().date()}')")
+        cursor.execute(f"insert into addtask(emp_id,task,compornot,tod_date) values({current_user.id},'{task}',{False},'{datetime.today().date()}')")
         mydb.commit()
         return redirect("/welcome")
 @login_required
 @app.route("/profile")
 def profile():
     return render_template("profile.html",user = current_user)
+@login_required
+@app.route("/completed/<id>")
+def completed(id):
+    id = int(id)
+    cursor.execute(f"update addtask set compornot = {True} where emp_id = {current_user.id} and taskid = {id}")
+    return redirect("/welcome")
 @app.route('/logout')
 @login_required
 def logout():

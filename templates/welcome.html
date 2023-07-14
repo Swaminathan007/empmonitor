@@ -71,11 +71,18 @@
                         <div class="container scroller shadow rounded">
                             {%for i in tasks%}
                                 <div class="card p-2 mb-3">
+                                    
+                                    {%if i[1]%}
                                     <div class="col">
-                                        <h5>{{i}}</h5>
+                                        <s><h5>{{i[0]}}</h5></s>
                                     </div>
+                                    {%else%}
                                     <div class="col">
-                                        <a href="/completed/{{id}}">Completed</a>
+                                        <h5>{{i[0]}}</h5>
+                                    </div>
+                                    {%endif%}
+                                    <div class="col">
+                                        <a href="/completed/{{i[2]}}">Completed</a>
                                     </div>
                                 </div>
                             {%endfor%}
