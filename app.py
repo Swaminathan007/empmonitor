@@ -1,5 +1,6 @@
 from flask import *
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_mysqldb import MySQL
 import mysql.connector
 from datetime import datetime,date
 app = Flask(__name__)
@@ -87,15 +88,6 @@ def addtask():
 @app.route("/profile")
 def profile():
     return render_template("profile.html",user = current_user)
-@login_required
-@app.route("/completed/<id>")
-def completed(id):
-    id = int(id)
-
-    cursor.execute(f"update addtask set compornot = {True} where emp_id = {current_user.id} and taskid = {id}")
-    mydb.commit()
-    flash("Task completed successfully")
-    return redirect("/welcome")
 @app.route('/logout')
 @login_required
 def logout():

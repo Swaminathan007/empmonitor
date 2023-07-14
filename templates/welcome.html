@@ -75,6 +75,7 @@
                         <h4 class="text-center">Task list</h4>
                         <div class="container d-flex flex-wrap justify-content-center align-items-center scroller p-2 shadow rounded bg-info">
                             {%for i in tasks%}
+<<<<<<< HEAD
                                 <div class="container d-flex jutify-content-center align-items-center p-2 m-3 shadow-lg border-0 bg-light">
                                     {%if i[1]|int%}
                                         <div class="container w-90">
@@ -92,6 +93,22 @@
                                         </div>
                                     {%endif%}
                                     
+=======
+                                <div class="card p-2 mb-3">
+                                    
+                                    {%if i[1]%}
+                                    <div class="col">
+                                        <s><h5>{{i[0]}}</h5></s>
+                                    </div>
+                                    {%else%}
+                                    <div class="col">
+                                        <h5>{{i[0]}}</h5>
+                                    </div>
+                                    {%endif%}
+                                    <div class="col">
+                                        <a href="/completed/{{i[2]}}">Completed</a>
+                                    </div>
+>>>>>>> 6d37fec1f64c79dc0bc3ac89eeef1e7979d67042
                                 </div>
                             {%endfor%}
                         </div>
