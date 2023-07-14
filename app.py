@@ -38,6 +38,7 @@ class Task(UserMixin):
 def load_user(user_id):
     cursor.execute(f"select timezone from timezonetable where emp_id = {user_id}")
     td = cursor.fetchone()
+    print(td)
     cursor.execute(f'SELECT * FROM employeetable WHERE emp_id = {user_id}')
     user = cursor.fetchone()
 
@@ -81,7 +82,7 @@ def welcome():
 def addtask():
     if(request.method == "POST"):
         task = request.form["task"]
-        cursor.execute(f"insert into addtask(emp_id,task,compornot,tod_date) values({current_user.id},{task},{False},'{datetime.today().date()}')")
+        cursor.execute(f"insert into addtask(emp_id,task,compornot,tod_date) values({current_user.id},'{task}',{False},'{datetime.today().date()}')")
         mydb.commit()
         return redirect("/welcome")
 @login_required
