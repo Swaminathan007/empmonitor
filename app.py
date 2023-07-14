@@ -1,6 +1,5 @@
 from flask import *
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from flask_mysqldb import MySQL
 import mysql.connector
 from datetime import datetime,date
 app = Flask(__name__)
@@ -38,7 +37,6 @@ class Task(UserMixin):
 def load_user(user_id):
     cursor.execute(f"select timezone from timezonetable where emp_id = {user_id}")
     td = cursor.fetchone()
-    print(td)
     cursor.execute(f'SELECT * FROM employeetable WHERE emp_id = {user_id}')
     user = cursor.fetchone()
 
@@ -65,17 +63,16 @@ def login():
         if user and password == dob:
             user = User(user[0],dob,user[3],user[4],user[1],tzd)
             login_user(user)
+            flash("Signed in successfully")
             return redirect('/welcome')
-        
         else:
             flash('Invalid username or password', 'error')
     return render_template("login.html")
 @app.route("/welcome")
 @login_required
 def welcome():
-    cursor.execute(f"select task,compornot from addtask where emp_id={current_user.id}")
+    cursor.execute(f"select task,compornot,taskid from addtask where emp_id={current_user.id}")
     tasks = cursor.fetchall()
-    print(tasks)
     return render_template('welcome.html', user=current_user,tasks = tasks)
 @login_required
 @app.route("/addtask",methods = ["GET","POST"])
@@ -84,14 +81,27 @@ def addtask():
         task = request.form["task"]
         cursor.execute(f"insert into addtask(emp_id,task,compornot,tod_date) values({current_user.id},'{task}',{False},'{datetime.today().date()}')")
         mydb.commit()
+        flash("Task added successfully")
         return redirect("/welcome")
 @login_required
 @app.route("/profile")
 def profile():
     return render_template("profile.html",user = current_user)
+@login_required
+@app.route("/completed/<id>")
+def completed(id):
+    id = int(id)
+
+    cursor.execute(f"update addtask set compornot = {True} where emp_id = {current_user.id} and taskid = {id}")
+    mydb.commit()
+    flash("Task completed successfully")
+    return redirect("/welcome")
 @app.route('/logout')
 @login_required
 def logout():
+    cursor.execute(f"delete from timezonetable where emp_id = {current_user.id}")
+    mydb.commit()
     logout_user()
+    
     return redirect('/')
 app.run(debug = True,host = "0.0.0.0")

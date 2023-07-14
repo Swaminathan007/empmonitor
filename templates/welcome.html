@@ -7,7 +7,7 @@
         overflow-y: auto;
         }
         .scroller::-webkit-scrollbar {
-            width: 8px;
+            width: 0px;
           }
           
           .scroller::-webkit-scrollbar-track {
@@ -19,9 +19,6 @@
             border-radius: 4px;
           }
           
-          .scroller::-webkit-scrollbar-thumb:hover {
-            background-color:red;
-          }
           .large{
             font-size: 20px;;
           }
@@ -37,22 +34,30 @@
           <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
               <a class="nav-link active" aria-current="page" href="/profile">Profile</a>
-              <a class="nav-link active" href="#">Completed tasks</a>
-              <a class="nav-link active" href="#">Logout</a>
+              <a class="nav-link active" href="/completedtasks">Completed tasks</a>
+              <a class="nav-link active" href="/logout">Logout</a>
             </div>
           </div>
         </div>
       </nav>
 
 
-
+    <div class="container mt-3">
+        {%for message in get_flashed_messages()%}
+            <div class="alert alert-success alert-dismissible fade show shadow" role="alert">
+                <strong>{{message}}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {%endfor%}
+    </div>
     <div class="container d-flex flex-wrap">
+        
         <div class="col-md-6 mt-4 m-2">
             <h2>Welcome, {{user.name}}</h2>
         </div>
         <div class="col-md-5 mt-4 m-2">
-            <div class="card">
-                <div class="card-header bg-dark text-center p-2">
+            <div class="card border-0 p-2" style="border-radius: 0px;">
+                <div class="card-header bg-dark text-center p-2" style="border-radius: 0px;">
                     <form action="/addtask" method="POST">
                         <div class="row">
                             <div class="col-md-8">
@@ -66,17 +71,27 @@
                     </form>
                 </div>
                 {%if tasks%}
-                    <div class="card-body p-2">
+                    <div class="card-body bg-success border-0 shadow-lg">
                         <h4 class="text-center">Task list</h4>
-                        <div class="container scroller shadow rounded">
+                        <div class="container d-flex flex-wrap justify-content-center align-items-center scroller p-2 shadow rounded bg-info">
                             {%for i in tasks%}
-                                <div class="card p-2 mb-3">
-                                    <div class="col">
-                                        <h5>{{i}}</h5>
-                                    </div>
-                                    <div class="col">
-                                        <a href="/completed/{{id}}">Completed</a>
-                                    </div>
+                                <div class="container d-flex jutify-content-center align-items-center p-2 m-3 shadow-lg border-0 bg-light">
+                                    {%if i[1]|int%}
+                                        <div class="container w-90">
+                                            <s><h5>{{i[0]|capitalize}}</h5></s>
+                                        </div>
+                                        <div class="container w-10">
+                                            <a href="/completed/{{i[2]}}" class="btn btn-outline-success disabled"><i class="bi bi-check-lg"></i></a>
+                                        </div>
+                                    {%else%}
+                                        <div class="container w-90">
+                                            <h5>{{i[0]|capitalize}}</h5>
+                                        </div>
+                                        <div class="container w-10">
+                                            <a href="/completed/{{i[2]}}" class="btn btn-outline-success" ><i class="bi bi-check-lg"></i></a>
+                                        </div>
+                                    {%endif%}
+                                    
                                 </div>
                             {%endfor%}
                         </div>
@@ -90,6 +105,4 @@
             </div>
         </div>
     </div>
-  
-  
 {%endblock%}
