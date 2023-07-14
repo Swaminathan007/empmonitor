@@ -2,104 +2,57 @@
 {%block title%}Login{%endblock%}
 {%block content%}
     <style>
-        .e1_2 { 
-            overflow:hidden;
+        html,
+        body {
+            height: 100%;
+            width:100%;
+            background: url("https://images.unsplash.com/photo-1483058712412-4245e9b90334?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
         }
-        .e1_2 { 
-            background-color:rgba(0, 0, 0, 1);
-            width:1200px;
-            height:1200px;
-            position:absolute;
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
         }
-        .e1_10 { 
-            background-color:rgba(129.00000751018524, 104.00000140070915, 15.000000055879354, 1);
-            width:234px;
-            height:82px;
-            position:absolute;
-            left:483px;
-            top:690px;
-            border-top-left-radius:20px;
-            border-top-right-radius:20px;
-            border-bottom-left-radius:20px;
-            border-bottom-right-radius:20px;
-        }
-        .e1_13 { 
-            color:rgba(0, 0, 0, 1);
-            width:67px;
-            height:30px;
-            position:absolute;
-            left:566px;
-            top:716px;
-            font-family:Inter;
-            text-align:left;
-            font-size:25px;
-            letter-spacing:0;
-        }
-        .e3_2 { 
-            background-color:rgba(217.0000022649765, 217.0000022649765, 217.0000022649765, 1);
-            width:498px;
-            height:64px;
-            position:absolute;
-            left:351px;
-            top:358px;
-            border-top-left-radius:12px;
-            border-top-right-radius:12px;
-            border-bottom-left-radius:12px;
-            border-bottom-right-radius:12px;
-        }
-        .e3_3 { 
-            background-color:rgba(217.0000022649765, 217.0000022649765, 217.0000022649765, 1);
-            width:498px;
-            height:64px;
-            position:absolute;
-            left:351px;
-            top:536px;
-            border-top-left-radius:12px;
-            border-top-right-radius:12px;
-            border-bottom-left-radius:12px;
-            border-bottom-right-radius:12px;
-        }
-        .e3_4 { 
-            color:rgba(255, 255, 255, 1);
-            width:132px;
-            height:38px;
-            position:absolute;
-            left:351px;
-            top:314px;
-            font-family:Poppins;
-            text-align:left;
-            font-size:25px;
-            letter-spacing:0;
-        }
-        .e3_5 { 
-            color:rgba(255, 255, 255, 1);
-            width:25px;
-            height:38px;
-            position:absolute;
-            left:353px;
-            top:492px;
-            font-family:Poppins;
-            text-align:left;
-            font-size:25px;
-            letter-spacing:0;
-        }
-        .e8_2 { 
-            opacity:0.20000000298023224;
-            width:2010px;
-            height:1131px;
-            position:absolute;
-            left:-301px;
-            top:69px;
-            background-image:url(images/afp_9dd4kz_1629870213363_1633981481927_1.png);
-            background-repeat:no-repeat;
-            background-size:cover;
-        }
-        
     </style>
-    <div class=e1_2>
-        <div class="e1_10"></div><span  class="e1_13">Login</span>
-        <div class="e3_2"></div>
-        <div class="e3_3"></div><span  class="e3_4">Username</span><span  class="e3_5">ID </span>
-        <div class="e8_2"></div>
+    <div class="container">
+        <div class="col-md-6">
+            {%for message in get_flashed_messages()%}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Login failed</strong> {{message}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {%endfor%}
+            <div class="card bg-info shadow">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Employee Login</h5>
+                    <form action = "/" method = "POST">
+                        <div class="mb-3">
+                            <label for="Employee ID" class="form-label">Employee ID</label>
+                            <input type="text" class="form-control" id="Employee ID" name="id" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">DOB(ddmmyyyy)</label>
+                            <input type="password" class="form-control" id="password" name="dob">
+                        </div>
+                        <div class="mb-3">
+                            <label for="timezone" class="form-label">Timezone</label>
+                                <select class="form-select" id="timezone" name="tzd">
+                                    <option value="GMT +5:30 IST">GMT +5:30 IST</option>
+                                    <option value="GMT +0">GMT +0</option>
+                                    <option value="GMT +4 GST">GMT +4 GST</option>
+                                </select>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-light">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+    
 {%endblock%}

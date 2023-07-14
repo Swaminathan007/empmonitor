@@ -1,0 +1,95 @@
+{%extends "base.html"%}
+{%block title%}Welcome{%endblock%}
+{%block content%}
+    <style>
+        .scroller {
+        max-height: 300px;
+        overflow-y: auto;
+        }
+        .scroller::-webkit-scrollbar {
+            width: 8px;
+          }
+          
+          .scroller::-webkit-scrollbar-track {
+            background-color: #f1f1f1;
+          }
+          
+          .scroller::-webkit-scrollbar-thumb {
+            background-color: #888;
+            border-radius: 4px;
+          }
+          
+          .scroller::-webkit-scrollbar-thumb:hover {
+            background-color:red;
+          }
+          .large{
+            font-size: 20px;;
+          }
+    </style>
+
+
+    <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Company</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <a class="nav-link active" aria-current="page" href="/profile">Profile</a>
+              <a class="nav-link active" href="#">Completed tasks</a>
+              <a class="nav-link active" href="#">Logout</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+
+
+    <div class="container d-flex flex-wrap">
+        <div class="col-md-6 mt-4 m-2">
+            <h2>Welcome, {{user.name}}</h2>
+        </div>
+        <div class="col-md-5 mt-4 m-2">
+            <div class="card">
+                <div class="card-header bg-dark text-center p-2">
+                    <form action="/addtask" method="POST">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <input type="text" name="task" class="form-control" placeholder="Enter task to be completed today" required>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-outline-light">Add</button>
+                            </div>
+                        </div>
+                       
+                    </form>
+                </div>
+                {%if tasks%}
+                    <div class="card-body p-2">
+                        <h4 class="text-center">Task list</h4>
+                        <div class="container scroller shadow rounded">
+                            {%for i in tasks%}
+                                <div class="card p-2 mb-3">
+                                    <div class="col">
+                                        <h5>{{i}}</h5>
+                                    </div>
+                                    <div class="col">
+                                        <a href="/completed/{{id}}">Completed</a>
+                                    </div>
+                                </div>
+                            {%endfor%}
+                        </div>
+                    </div> 
+                    {%else%}
+                        <div class="card-body">
+                            <h5 class="text-center">No tasks today</h5>
+                        </div>
+                    {%endif%}
+                
+            </div>
+        </div>
+    </div>
+  
+  
+{%endblock%}

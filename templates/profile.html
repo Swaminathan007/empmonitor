@@ -1,0 +1,49 @@
+{%extends "base.html"%}
+{%block title%}Welcome{%endblock%}
+{%block content%}
+<style>
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        height: 100vh;
+        margin-top: 20px;
+      }
+</style>
+<div class="container">
+    <div class="card shadow" style="width: 30rem;border:none;">
+        <div class="card-header">
+            <h3>
+                Details
+            </h3>
+        </div>
+      <div class="card-body">
+        <table class="table table-bordered table-striped">
+            <tbody>
+                <tr>
+                    <td><strong>Name</strong></td>
+                    <td>{{user.name}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Age</strong></td>
+                    <td>{{user.age}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Sex</strong></td>
+                    <td>{{user.sex}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Department</strong></td>
+                    <td>{{user.dept}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Timezone</strong></td>
+                    <td>{{user.tzd}}</td>
+                </tr>
+            </tbody>
+        </div>  
+      </div>
+    </div>
+  </div>
+{%endblock%}
