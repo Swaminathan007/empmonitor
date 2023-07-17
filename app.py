@@ -1,99 +1,142 @@
 from flask import *
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from flask_mysqldb import MySQL
+from flask_sqlalchemy import SQLAlchemy
 import mysql.connector
-from datetime import datetime,date
+from datetime import datetime
+#defining app and database
 app = Flask(__name__)
 app.secret_key = '12345678' 
+app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql://root:12345678@database-1.clrbethb6kqw.ap-south-1.rds.amazonaws.com:3306/emp'
+database = SQLAlchemy(app)
+#defining login manager
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-
-
-mydb = mysql.connector.connect(host = "database-1.clrbethb6kqw.ap-south-1.rds.amazonaws.com",
-                               username="root",password = "12345678",port=3306,database="emp")
-
-tasks = []
-cursor = mydb.cursor()
+#Employee class 
+class Employee(database.Model ,UserMixin):
+    __tablename__ = "employeetable"
+    name = database.Column(database.String)
+    emp_id = database.Column(database.Integer,primary_key = True)
+    dept_id = database.Column(database.Integer)
+    dept_name = database.Column(database.String)
+    gender = database.Column(database.String)
+    age = database.Column(database.Integer)
+    dob = database.Column(database.Date)
+    
+    def get_id(self):
+        return self.emp_id
+#Timezone in which the employee is logging in
+class Timezone(database.Model):
+    __tablename__ = "timezonetable"
+    emp_id = database.Column(database.Integer,database.ForeignKey(Employee.emp_id),primary_key = True)
+    timezone = database.Column(database.String)
+    today_date = database.Column(database.Date)
+    def __init__(self,id,tz,td):
+        self.emp_id = id
+        self.timezone = tz
+        self.today_date = td
+#Login and out time of employee
+class InOut(database.Model):
+    __tablename__ = "inouttable"
+    emp_id = database.Column(database.Integer,database.ForeignKey(Employee.emp_id),primary_key = True)
+    login_time = database.Column(database.Time)
+    logout_time = database.Column(database.Time,nullable = True)
+    currentdate = database.Column(database.Date)
+    def __init__(self,id,lint,dt):
+        self.emp_id = id
+        self.login_time = lint
+        self.logout_time = None
+        self.currentdate = dt
+#Day to day task of the employee
+class Task(database.Model):
+    __tablename__ = "addtask"
+    emp_id = database.Column(database.Integer,database.ForeignKey(Employee.emp_id))
+    task = database.Column(database.String)
+    compornot = database.Column(database.Boolean)
+    tod_date = database.Column(database.Date)
+    taskid = database.Column(database.Integer,primary_key=True,auto_increment = True)
+    def __init__(self,id,task,td):
+        self.emp_id = id
+        self.task = task
+        self.compornot = False
+        self.tod_date = td
 def findob(date):
     date = str(date).split("-")[::-1]
     dob = ""
     for i in date:
         dob+=i
     return dob
-class User(UserMixin):
-    def __init__(self, name, dob,dept,sex,id,tzd):
-        self.name = name
-        self.dob = dob
-        self.dept = dept
-        self.sex = sex
-        self.id = id
-        self.tzd = tzd
-        self.age = datetime.now().year - int(self.dob[4:]) 
-class Task(UserMixin):
-    def __init__(self,task,completed):
-        self.task = task 
-        self.completed = completed
+
 @login_manager.user_loader
 def load_user(user_id):
-    cursor.execute(f"select timezone from timezonetable where emp_id = {user_id}")
-    td = cursor.fetchone()
-    cursor.execute(f'SELECT * FROM employeetable WHERE emp_id = {user_id}')
-    user = cursor.fetchone()
+    return Employee.query.get(user_id)
 
-    
-    
-    if user is None:
-        return None
-    
-    return User(user[0],findob(user[6]),user[3],user[4],user[1],td[0])
 @app.route("/",methods = ["GET","POST"])
-def login():
-    if request.method == 'POST':
+def home():
+    if(request.method == "POST"):
         id = request.form['id']
-        password = request.form['dob']
-        tzd = request.form['tzd']
+        password = request.form['dob'] 
+        timezone = request.form["tzd"]
+        emp = Employee.query.filter_by(emp_id = int(id)).first()
+        dob = database.session.query(Employee.dob).filter_by(emp_id = int(id)).first()
         
-        cursor.execute(f"insert into timezonetable values({int(id)},'{tzd}','{datetime.today().date()}')")
-        mydb.commit()
+        tzd = Timezone(id=id,tz=timezone,td=datetime.now().date())
+        InTime = InOut(id=id,lint=datetime.now().time(),dt = datetime.now().date())
         
-        cursor.execute(f"select * from employeetable where emp_id = {id}")
-        user = cursor.fetchone()
-        dob = findob(user[6])
+        database.session.add(tzd)
+        database.session.commit()
+        database.session.add(InTime)
+        database.session.commit()
         
-        if user and password == dob:
-            user = User(user[0],dob,user[3],user[4],user[1],tzd)
-            login_user(user)
+        if emp and password == findob(str(dob[0])):
+            login_user(emp)
             flash("Signed in successfully")
-            return redirect('/welcome')
+            return redirect("/welcome")
         else:
-            flash('Invalid username or password', 'error')
+            flash("Invalid username or password")
     return render_template("login.html")
+
 @app.route("/welcome")
 @login_required
 def welcome():
-    cursor.execute(f"select task,compornot,taskid from addtask where emp_id={current_user.id}")
-    tasks = cursor.fetchall()
-    return render_template('welcome.html', user=current_user,tasks = tasks)
+    emp = Employee.query.filter_by(emp_id = int(current_user.emp_id)).first()
+    tasks = Task.query.filter_by(emp_id = int(current_user.emp_id),tod_date = datetime.now().date())
+    return render_template('welcome.html', user=emp,tasks=list(tasks))
 @login_required
 @app.route("/addtask",methods = ["GET","POST"])
 def addtask():
     if(request.method == "POST"):
         task = request.form["task"]
-        cursor.execute(f"insert into addtask(emp_id,task,compornot,tod_date) values({current_user.id},'{task}',{False},'{datetime.today().date()}')")
-        mydb.commit()
+        task_to_be_added = Task(id=current_user.emp_id,task=task,td=datetime.now().date())
+        database.session.add(task_to_be_added)
+        database.session.commit()
         flash("Task added successfully")
         return redirect("/welcome")
 @login_required
 @app.route("/profile")
 def profile():
     return render_template("profile.html",user = current_user)
+@login_required
+@app.route("/completed/<int:id>")
+def complete_task(id):
+    task_comp = Task.query.filter_by(taskid=id).first()
+    task_comp.compornot = True
+    database.session.commit()
+    flash("Task completed successfully")
+    return redirect("/welcome")
 @app.route('/logout')
 @login_required
 def logout():
-    cursor.execute(f"delete from timezonetable where emp_id = {current_user.id}")
-    mydb.commit()
-    logout_user()
+    emp_tz = Timezone.query.filter_by(emp_id = int(current_user.emp_id)).first()
+    database.session.delete(emp_tz)
+    database.session.commit()
+
+    inout = InOut.query.filter_by(emp_id = int(current_user.emp_id),logout_time = None).first()
     
+    inout.logout_time = datetime.now().time()
+    database.session.commit()
+    
+    logout_user()
     return redirect('/')
-app.run(debug = True,host = "0.0.0.0")
+if __name__ == "__main__":
+    app.run(debug = True,host = "0.0.0.0")

@@ -75,42 +75,25 @@
                         <h4 class="text-center">Task list</h4>
                         <div class="container d-flex flex-wrap justify-content-center align-items-center scroller p-2 shadow rounded bg-info">
                             {%for i in tasks%}
-
                                 <div class="container d-flex jutify-content-center align-items-center p-2 m-3 shadow-lg border-0 bg-light">
-                                    {%if i[1]|int%}
+                                    {%if i.compornot|int%}
                                         <div class="container w-90">
-                                            <s><h5>{{i[0]|capitalize}}</h5></s>
+                                            <s><h5>{{i.task|capitalize}}</h5></s>
                                         </div>
                                         <div class="container w-10">
                                             <a href="/completed/{{i[2]}}" class="btn btn-outline-success disabled"><i class="bi bi-check-lg"></i></a>
                                         </div>
                                     {%else%}
                                         <div class="container w-90">
-                                            <h5>{{i[0]|capitalize}}</h5>
+                                            <h5>{{i.task|capitalize}}</h5>
                                         </div>
                                         <div class="container w-10">
-                                            <a href="/completed/{{i[2]}}" class="btn btn-outline-success" ><i class="bi bi-check-lg"></i></a>
+                                            <a href="/completed/{{i.taskid}}" class="btn btn-outline-success" ><i class="bi bi-check-lg"></i></a>
                                         </div>
                                     {%endif%}
-                                    
-
-                                <div class="card p-2 mb-3">
-                                    
-                                    {%if i[1]%}
-                                    <div class="col">
-                                        <s><h5>{{i[0]}}</h5></s>
-                                    </div>
-                                    {%else%}
-                                    <div class="col">
-                                        <h5>{{i[0]}}</h5>
-                                    </div>
-                                    {%endif%}
-                                    <div class="col">
-                                        <a href="/completed/{{i[2]}}">Completed</a>
-                                    </div>
                                 </div>
                             {%endfor%}
-                        </div>
+                        
                     </div> 
                     {%else%}
                         <div class="card-body">
