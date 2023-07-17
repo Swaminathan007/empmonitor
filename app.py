@@ -130,12 +130,9 @@ def logout():
     emp_tz = Timezone.query.filter_by(emp_id = int(current_user.emp_id)).first()
     database.session.delete(emp_tz)
     database.session.commit()
-
     inout = InOut.query.filter_by(emp_id = int(current_user.emp_id),logout_time = None).first()
-    
     inout.logout_time = datetime.now().time()
     database.session.commit()
-    
     logout_user()
     return redirect('/')
 if __name__ == "__main__":
